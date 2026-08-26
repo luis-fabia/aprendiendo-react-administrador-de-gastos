@@ -1,4 +1,4 @@
-import type {filtroCategoriaProps} from '../types/gasto';
+import type { filtroCategoriaProps } from '../types/gasto';
 
 
 export function FiltroPorCategoria( {filtroCategoria, setFiltroCategoria } : filtroCategoriaProps) {

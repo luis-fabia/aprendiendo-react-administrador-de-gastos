@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, use } from "react";
 import type { Gasto } from "../types/gasto";
 import { GatosItem } from "./GastoItem";
 import { ResumenGastos } from "./ResumenGastos";
@@ -7,6 +7,8 @@ import { FormularioGastos } from './FormularioGasto.js'
 import { v4 as uuidv4 } from 'uuid'
 import { GuardarGastos, RecuperarGastos, GuardarPresupuesto, RecuperarPresupuesto } from './utils/storage.js'
 import { useLocalStorage } from "./hooks/useLocalStorage.js";
+import { EstadisticasGastos } from "./EstadisticasGastos.js"
+import { FiltroPorValor } from "./FiltroPorValor.js";
 
 export function ListaDeGastos() {
 
@@ -16,19 +18,26 @@ export function ListaDeGastos() {
     const [presupuesto, setPresupuesto] = useLocalStorage<number>("Presupuesto", 0)
     const [inputPresupuesto, setInputPresupuesto] = useState("")
     const [mensaje, setMensaje] = useState("")
+    const [valorMaximo, setValorMaximo] = useState("")
+    const [valorMinimo, setValorMinimo] = useState("")
 
 
     const gastosFiltrados = gastos.filter((gasto) => {
-        if (filtroCategoria === "") {
-            return true
-        }
 
-        return gasto.categoria === filtroCategoria
+        const categoriaValida =
+            filtroCategoria === "" ||
+            gasto.categoria === filtroCategoria
+
+        const minimoValido =
+            valorMinimo === "" ||
+            gasto.valor >= Number(valorMinimo)
+
+        const maximoValido =
+            valorMaximo === "" ||
+            gasto.valor <= Number(valorMaximo)
+
+        return categoriaValida && minimoValido && maximoValido
     })
-
-
-
-
 
 
 
@@ -70,12 +79,26 @@ export function ListaDeGastos() {
     }, 0)
 
 
-
     const totalFiltrado = gastosFiltrados.reduce((acumulador, valorActual) => {
         return acumulador + valorActual.valor
     }, 0)
 
+
     const editar = ({ id, descripcion, valor, categoria }: Gasto) => {
+
+        const gastoAnterior = gastos.find(gasto => gasto.id === id)
+
+        if (!gastoAnterior) {
+            return
+        }
+
+        const nuevoTotal = totalGastos - gastoAnterior.valor + valor
+
+        if (nuevoTotal > presupuesto) {
+            setMensaje("Prespuesto Superado")
+            return
+        }
+
         const editarValor = gastos.map(edicion => {
             if (edicion.id === id) {
                 return { ...edicion, descripcion, valor, categoria }
@@ -85,6 +108,7 @@ export function ListaDeGastos() {
         })
 
         setGastos(editarValor)
+
 
 
     }
@@ -141,6 +165,13 @@ export function ListaDeGastos() {
                 filtroCategoria={filtroCategoria}
                 setFiltroCategoria={setFiltroCategoria}
             />
+            <FiltroPorValor
+                valorMinimo={valorMinimo}
+                valorMaximo={valorMaximo}
+                setValorMinimo={setValorMinimo}
+                setValorMaximo={setValorMaximo}
+
+            />
 
             {gastosFiltrados.map((valor) => (
                 <GatosItem
@@ -160,6 +191,14 @@ export function ListaDeGastos() {
                 totalFiltrado={totalFiltrado}
                 reiniciar={reiniciar}
             />
+
+            <EstadisticasGastos
+
+                totalGastos={totalGastos}
+                gastos={gastos}
+            />
+
+
 
         </>
     );

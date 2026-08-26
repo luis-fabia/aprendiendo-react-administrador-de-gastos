@@ -1,3 +1,4 @@
+
 export interface Gasto {
     id: string,
     descripcion: string,
@@ -39,4 +40,23 @@ export interface FormularioGastosProps {
 
 export interface ResumenPorCategoriaProps {
     gastos: Gasto[]
+}
+
+export interface EstadisticasGastosProps  {
+    gasto: Gasto[]
+    totalGastos: number
+}
+
+// export interface FiltroValorProps {
+//     valorMinimo = string
+//     valorMaximo = string
+//     setValorMinimo = (valor: string) => void
+//     setValorMaximo = (valor: string) => void
+// }
+
+export interface FiltroPorValorProps {
+    valorMinimo: string
+    setValorMinimo: (valor: string) => void
+    valorMaximo: string
+    setValorMaximo: (valor: string) => void
 }
