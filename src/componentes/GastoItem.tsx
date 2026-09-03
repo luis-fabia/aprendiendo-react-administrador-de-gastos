@@ -1,20 +1,25 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import type { GastoProps } from "../types/gasto";
 
-export function GatosItem({ gasto, eliminarGastos, editar }: GastoProps) {
+export const  GatosItem = memo (function GatosItem({ gasto, eliminarGastos, editar }: GastoProps) {
+    
 
 
-    const [editado, setEditado] = useState(false)
+console.log("GastoItem renderizó:", gasto.descripcion)
+
+const [editado, setEditado] = useState(false)
 
     const [descripcionEditada, setDescripcionEditada] = useState(gasto.descripcion)
     const [valorEditado, setValorEditado] = useState(gasto.valor)
     const [categoriaEditada, setCategoriaEditada] = useState(gasto.categoria)
+    const [fechaEditada, setFechaEditada] = useState(gasto.fecha)
 
-
+    console.log("GastoItem renderizó:", gasto.descripcion)
     const cancelar = () => {
     setDescripcionEditada(gasto.descripcion)
     setValorEditado(gasto.valor)
     setCategoriaEditada(gasto.categoria)
+    setFechaEditada(gasto.fecha)
 
     setEditado(false)
     }
@@ -47,7 +52,10 @@ export function GatosItem({ gasto, eliminarGastos, editar }: GastoProps) {
                             <option value="Otro">Otro</option>
                         </select>
 
-                        <button onClick={() => { setEditado(false), editar({id: gasto.id, descripcion: descripcionEditada, valor: valorEditado, categoria:categoriaEditada}) }}>Guardar</button>
+                        <input type="text" value={fechaEditada} 
+                        onChange={(e) => setFechaEditada(e.target.value)} />
+
+                        <button onClick={() => { setEditado(false), editar({id: gasto.id, descripcion: descripcionEditada, valor: valorEditado, categoria:categoriaEditada, fecha: fechaEditada}) }}>Guardar</button>
                         <button onClick={() => cancelar()}>Cancelar</button>
 
                     </ul >
@@ -61,6 +69,7 @@ export function GatosItem({ gasto, eliminarGastos, editar }: GastoProps) {
                         <li>Descripcion: {gasto.descripcion}</li>
                         <li>Valor: {gasto.valor}</li>
                         <li>Categoria: {gasto.categoria}</li>
+                        <li>Fecha: {gasto.fecha}</li>
                         <button onClick={() => eliminarGastos(gasto.id)}>Eliminar Gasto</button>
                         <button onClick={() => setEditado(true)}>Editar</button>
                     </ul >
@@ -70,6 +79,4 @@ export function GatosItem({ gasto, eliminarGastos, editar }: GastoProps) {
             }
         </>)
 
-}
-
-
+})

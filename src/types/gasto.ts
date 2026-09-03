@@ -4,6 +4,7 @@ export interface Gasto {
     descripcion: string,
     valor: number,
     categoria: string
+    fecha: string
 }
 
 export interface GastoProps {
@@ -47,16 +48,18 @@ export interface EstadisticasGastosProps  {
     totalGastos: number
 }
 
-// export interface FiltroValorProps {
-//     valorMinimo = string
-//     valorMaximo = string
-//     setValorMinimo = (valor: string) => void
-//     setValorMaximo = (valor: string) => void
-// }
-
 export interface FiltroPorValorProps {
     valorMinimo: string
     setValorMinimo: (valor: string) => void
     valorMaximo: string
     setValorMaximo: (valor: string) => void
+}
+
+export interface OrdenarGastosProps  {
+    orden: string
+    setOrden: (valor: string) => void
+}
+
+export interface TotalGastosProps {
+    gastos: Gasto
 }

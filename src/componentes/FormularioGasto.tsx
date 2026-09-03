@@ -1,5 +1,5 @@
 import type { FormularioGastosProps } from '../types/gasto'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function FormularioGastos({
     inputPresupuesto, setInputPresupuesto, manejarPresupuesto, agregarGasto }: FormularioGastosProps) {
@@ -7,29 +7,36 @@ export function FormularioGastos({
     const [descripcion, setDescripcion] = useState("")
     const [valor, setValor] = useState("")
     const [categoria, setCategoria] = useState("")
+    const [errorMensaje, setErrorMensaje] = useState("")
 
 
     const manejarEnvio = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-
+        setErrorMensaje("")
 
         if (!descripcion.trim()) {
-            console.log("descripcion")
+            setErrorMensaje("La descripcion es obligatoria")
             return
         }
 
         if (!valor.trim()) {
-            console.log("valor")
+            setErrorMensaje("El valor  es obligatoria")
             return
         }
 
-        if (Number(valor) <= 0) {
-            console.log("valor-Numero")
+        if (isNaN(Number(valor))) {
+            setErrorMensaje("El valor debe ser un número")
+            return
+        }
+
+
+        if (Number(valor) <= 0 ) {
+            setErrorMensaje("El valor debe ser mayor a 0 ")
             return
         }
 
         if (!categoria.trim()) {
-            console.log("categoria")
+            setErrorMensaje(" La categoria es Obligatoria")
             return
         }
 
@@ -39,13 +46,24 @@ export function FormularioGastos({
             categoria: categoria.trim()
         }
 
-        agregarGasto(gasto.descripcion, gasto.valor, gasto.categoria)
+        const resultado =  agregarGasto(gasto.descripcion, gasto.valor, gasto.categoria)
 
+       if (resultado) {
         setDescripcion("")
         setValor("")
         setCategoria("")
+        inputref.current?.focus()
+       }
+
+        
+
     }
 
+    const inputref = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        inputref.current?.focus()
+    }, [])
 
     return (
         <>
@@ -57,7 +75,7 @@ export function FormularioGastos({
 
 
                 <label htmlFor="descripcion">Descripcion</label>
-                <input type="text" id="descripcion" placeholder="Descripcion del producto"
+                <input type="text" id="descripcion" placeholder="Descripcion del producto" ref={inputref}
                     onChange={(e) => setDescripcion(e.target.value)} value={descripcion} />
 
                 <label htmlFor="valor">Valor</label>
@@ -79,6 +97,8 @@ export function FormularioGastos({
                     <option value="Gustos">Gustos</option>
                     <option value="Otro">Otro</option>
                 </select>
+
+                {errorMensaje && <p>{errorMensaje}</p>} 
 
                 <button type="submit">Agregar Gasto</button>
             </form>
