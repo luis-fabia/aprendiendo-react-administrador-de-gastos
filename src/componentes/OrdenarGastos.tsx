@@ -1,4 +1,4 @@
-import type {OrdenarGastosProps} from '../types/gasto'
+import type {OrdenarGastosProps, OrdenGastos} from '../types/gasto'
 
 export function OrdenarGastos({orden, setOrden}:OrdenarGastosProps) {
 
@@ -6,7 +6,7 @@ export function OrdenarGastos({orden, setOrden}:OrdenarGastosProps) {
         <>  
             <label htmlFor="orden"> Ordenar </label>
             <select value={orden} id="orden"
-            onChange={(e) => setOrden(e.target.value)}
+            onChange={(e) => setOrden(e.target.value as OrdenGastos)}
             >
                 <option value="">Todas</option>
                 <option value="Mas Caro">Mas Caro</option>

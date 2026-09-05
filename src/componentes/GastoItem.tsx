@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import type { GastoProps } from "../types/gasto";
+import type { GastoProps, CategoriaGasto } from "../types/gasto";
 
 export const  GatosItem = memo (function GatosItem({ gasto, eliminarGastos, editar }: GastoProps) {
     
@@ -42,7 +42,7 @@ const [editado, setEditado] = useState(false)
                         />
                         <select
                             value={categoriaEditada}
-                            onChange={(e) => setCategoriaEditada(e.target.value)}
+                            onChange={(e) => setCategoriaEditada(e.target.value as CategoriaGasto)}
                         >
                             <option value="Vivienda">Vivienda</option>
                             <option value="Educacion">Educación</option>

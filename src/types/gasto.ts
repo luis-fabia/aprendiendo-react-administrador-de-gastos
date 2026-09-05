@@ -43,7 +43,7 @@ export interface ResumenPorCategoriaProps {
     gastos: Gasto[]
 }
 
-export interface EstadisticasGastosProps  {
+export interface EstadisticasGastosProps {
     gasto: Gasto[]
     totalGastos: number
 }
@@ -55,7 +55,7 @@ export interface FiltroPorValorProps {
     setValorMaximo: (valor: string) => void
 }
 
-export interface OrdenarGastosProps  {
+export interface OrdenarGastosProps {
     orden: string
     setOrden: (valor: string) => void
 }
@@ -63,3 +63,25 @@ export interface OrdenarGastosProps  {
 export interface TotalGastosProps {
     gastos: Gasto
 }
+
+export interface FiltrosGastos {
+    gastos: Gasto[]
+    filtroCategoria: string
+    valorMinimo: string
+    valorMaximo: string
+}
+
+export type OrdenGastos =
+    | ""
+    | "Mas Caro"
+    | "Mas Barato"
+    | "Mas Reciente"
+    | "Mas Antiguo"
+
+export type CategoriaGasto =
+    | "Vivienda"
+    | "Educación"
+    | "Transporte" 
+    | "Suscripciones" 
+    | "Gustos" 
+    | "Otro" 

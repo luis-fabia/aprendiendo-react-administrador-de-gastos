@@ -1,5 +1,5 @@
-import { useCallback, useState, useEffect, useMemo, useRef } from "react";
-import type { Gasto } from "../types/gasto";
+import { useCallback, useState, useEffect, useMemo, useRef, use } from "react";
+import type { Gasto, OrdenGastos } from "../types/gasto";
 import { GatosItem } from "./GastoItem";
 import { ResumenGastos } from "./ResumenGastos";
 import { FiltroPorCategoria } from './FiltroCategoria.js'
@@ -10,7 +10,8 @@ import { useLocalStorage } from "./hooks/useLocalStorage.js";
 import { EstadisticasGastos } from "./EstadisticasGastos.js"
 import { FiltroPorValor } from "./FiltroPorValor.js";
 import { OrdenarGastos } from "./OrdenarGastos.js"
-import {calcularTotalGastos} from './utils/gastos.js'
+import { calcularTotalGastos } from './utils/gastos.js'
+import { filtrarGastos, ordenarGastos, FiltrarTotal } from './utils/gastos.js'
 
 export function ListaDeGastos() {
 
@@ -22,64 +23,21 @@ export function ListaDeGastos() {
     const [mensaje, setMensaje] = useState("")
     const [valorMaximo, setValorMaximo] = useState("")
     const [valorMinimo, setValorMinimo] = useState("")
-    const [orden, setOrden] = useState("")
-
-    const contador = useRef(0)
-
-    const aumentar = () => {
-        contador.current++
-            console.log(contador.current)
-
-    }
+    const [orden, setOrden] = useState<OrdenGastos>("")
 
 
-    const gastosFiltrados = useMemo(() => {
-        return gastos.filter((gasto) => {
 
-            const categoriaValida =
-                filtroCategoria === "" ||
-                gasto.categoria === filtroCategoria
-
-            const minimoValido =
-                valorMinimo === "" ||
-                gasto.valor >= Number(valorMinimo)
-
-            const maximoValido =
-                valorMaximo === "" ||
-                gasto.valor <= Number(valorMaximo)
-
-            return categoriaValida && minimoValido && maximoValido
-        })
+    const calcularGastosFiltrados = useMemo(() => {
+        return filtrarGastos({ gastos, filtroCategoria, valorMinimo, valorMaximo })
     }, [gastos, filtroCategoria, valorMinimo, valorMaximo])
 
-
-    console.log("ListaDeGastos renderizó")
-
-
     const gastosOrdenados = useMemo(() => {
-        return [...gastosFiltrados].sort((a, b) => {
+        return ordenarGastos(calcularGastosFiltrados, orden)
+    }, [calcularGastosFiltrados, orden])
 
-            if (orden === "Mas Caro") {
-                return b.valor - a.valor
-            }
-
-            if (orden === "Mas Barato") {
-                return a.valor - b.valor
-            }
-
-            if (orden === "Mas Reciente") {
-                return new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-            }
-
-            if (orden === "Mas Antiguo") {
-                return new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
-            }
-
-            return 0
-        })
-    }, [gastosFiltrados, orden])
-
-
+    const totalFiltrado = useMemo(() => {
+        return FiltrarTotal(calcularGastosFiltrados)
+    }, [calcularGastosFiltrados])
 
     const agregarGasto = (descripcion: string, valor: number, categoria: string) => {
 
@@ -92,8 +50,6 @@ export function ListaDeGastos() {
             setMensaje("presupesto superado")
             return false
         }
-
-
 
         const gasto: Gasto = {
             id: uuidv4(),
@@ -113,15 +69,9 @@ export function ListaDeGastos() {
     const eliminarGasto = useCallback((id: string) => {
         const actualizarGastos = gastos.filter((gasto) => gasto.id !== id)
         setGastos(actualizarGastos)
-        console.log("Hola")
     }, [gastos])
 
     const totalGastos = calcularTotalGastos(gastos)
-
-
-    const totalFiltrado = gastosFiltrados.reduce((acumulador, valorActual) => {
-        return acumulador + valorActual.valor
-    }, 0)
 
 
     const editar = useCallback(({ id, descripcion, valor, categoria, fecha }: Gasto) => {
@@ -191,7 +141,7 @@ export function ListaDeGastos() {
         }
     }
 
-   
+
 
     return (
         <>
@@ -245,11 +195,6 @@ export function ListaDeGastos() {
                 totalGastos={totalGastos}
                 gastos={gastos}
             />
-
-            <button onClick={aumentar}>
-                Aumentar
-            </button>
-            <p>Contador: {contador.current}</p>
 
 
         </>
