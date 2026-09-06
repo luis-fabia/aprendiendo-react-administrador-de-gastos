@@ -1,13 +1,13 @@
 import { useState, memo } from "react";
 import type { GastoProps, CategoriaGasto } from "../types/gasto";
 
-export const  GatosItem = memo (function GatosItem({ gasto, eliminarGastos, editar }: GastoProps) {
-    
+export const GatosItem = memo(function GatosItem({ gasto, eliminarGastos, editar }: GastoProps) {
 
 
-console.log("GastoItem renderizó:", gasto.descripcion)
 
-const [editado, setEditado] = useState(false)
+    console.log("GastoItem renderizó:", gasto.descripcion)
+
+    const [editado, setEditado] = useState(false)
 
     const [descripcionEditada, setDescripcionEditada] = useState(gasto.descripcion)
     const [valorEditado, setValorEditado] = useState(gasto.valor)
@@ -16,12 +16,12 @@ const [editado, setEditado] = useState(false)
 
     console.log("GastoItem renderizó:", gasto.descripcion)
     const cancelar = () => {
-    setDescripcionEditada(gasto.descripcion)
-    setValorEditado(gasto.valor)
-    setCategoriaEditada(gasto.categoria)
-    setFechaEditada(gasto.fecha)
+        setDescripcionEditada(gasto.descripcion)
+        setValorEditado(gasto.valor)
+        setCategoriaEditada(gasto.categoria)
+        setFechaEditada(gasto.fecha)
 
-    setEditado(false)
+        setEditado(false)
     }
 
     return (
@@ -45,17 +45,26 @@ const [editado, setEditado] = useState(false)
                             onChange={(e) => setCategoriaEditada(e.target.value as CategoriaGasto)}
                         >
                             <option value="Vivienda">Vivienda</option>
-                            <option value="Educacion">Educación</option>
+                            <option value="Educación">Educación</option>
                             <option value="Transporte">Transporte</option>
                             <option value="Suscripciones">Suscripciones</option>
                             <option value="Gustos">Gustos</option>
                             <option value="Otro">Otro</option>
                         </select>
 
-                        <input type="text" value={fechaEditada} 
-                        onChange={(e) => setFechaEditada(e.target.value)} />
+                        <input type="text" value={fechaEditada}
+                            onChange={(e) => setFechaEditada(e.target.value)} />
 
-                        <button onClick={() => { setEditado(false), editar({id: gasto.id, descripcion: descripcionEditada, valor: valorEditado, categoria:categoriaEditada, fecha: fechaEditada}) }}>Guardar</button>
+                        <button
+                            onClick={() => {
+                                setEditado(false)
+                                editar(gasto.id, {
+                                    descripcion: descripcionEditada,
+                                    valor: valorEditado,
+                                    categoria: categoriaEditada
+                                })
+                            }}
+                        >Guardar</button>
                         <button onClick={() => cancelar()}>Cancelar</button>
 
                     </ul >

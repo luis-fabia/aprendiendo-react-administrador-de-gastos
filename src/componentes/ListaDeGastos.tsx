@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect, useMemo, useRef, use } from "react";
-import type { Gasto, OrdenGastos } from "../types/gasto";
+import type { Gasto, OrdenGastos, GastoEditable } from "../types/gasto";
 import { GatosItem } from "./GastoItem";
 import { ResumenGastos } from "./ResumenGastos";
 import { FiltroPorCategoria } from './FiltroCategoria.js'
@@ -74,7 +74,7 @@ export function ListaDeGastos() {
     const totalGastos = calcularTotalGastos(gastos)
 
 
-    const editar = useCallback(({ id, descripcion, valor, categoria, fecha }: Gasto) => {
+    const editar = useCallback((id: string, cambios: GastoEditable) => {
 
         const gastoAnterior = gastos.find(gasto => gasto.id === id)
 
@@ -82,7 +82,7 @@ export function ListaDeGastos() {
             return
         }
 
-        const nuevoTotal = totalGastos - gastoAnterior.valor + valor
+        const nuevoTotal = totalGastos - gastoAnterior.valor + cambios.valor
 
         if (nuevoTotal > presupuesto) {
             setMensaje("Prespuesto Superado")
@@ -91,7 +91,7 @@ export function ListaDeGastos() {
 
         const editarValor = gastos.map(edicion => {
             if (edicion.id === id) {
-                return { ...edicion, descripcion, valor, categoria, fecha }
+                return { ...edicion, ...cambios }
             }
 
             return edicion
